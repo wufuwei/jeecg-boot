@@ -5,12 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.util.JwtUtil;
-import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.MD5Util;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.system.entity.SysDepartPermission;
@@ -18,7 +16,6 @@ import org.jeecg.modules.system.entity.SysPermission;
 import org.jeecg.modules.system.entity.SysPermissionDataRule;
 import org.jeecg.modules.system.entity.SysRolePermission;
 import org.jeecg.modules.system.model.SysPermissionTree;
-import org.jeecg.modules.system.model.SysRoleDeisgnModel;
 import org.jeecg.modules.system.model.TreeModel;
 import org.jeecg.modules.system.service.*;
 import org.jeecg.modules.system.util.PermissionDataUtil;
@@ -232,9 +229,9 @@ public class SysPermissionController {
 			this.getAllAuthJsonArray(allauthjsonArray, allAuthList);
 			//路由菜单
 			json.put("menu", menujsonArray);
-			//按钮权限
+			//按钮权限（用户拥有的权限集合）
 			json.put("auth", authjsonArray);
-			//全部权限配置（按钮权限，访问权限）
+			//全部权限配置集合（按钮权限，访问权限）
 			json.put("allAuth", allauthjsonArray);
 			result.setResult(json);
 			result.success("查询成功");
@@ -284,7 +281,7 @@ public class SysPermissionController {
 	 * @param permission
 	 * @return
 	 */
-	@RequiresRoles({ "admin" })
+	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public Result<SysPermission> add(@RequestBody SysPermission permission) {
 		Result<SysPermission> result = new Result<SysPermission>();
@@ -304,7 +301,7 @@ public class SysPermissionController {
 	 * @param permission
 	 * @return
 	 */
-	@RequiresRoles({ "admin" })
+	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/edit", method = { RequestMethod.PUT, RequestMethod.POST })
 	public Result<SysPermission> edit(@RequestBody SysPermission permission) {
 		Result<SysPermission> result = new Result<>();
@@ -324,13 +321,12 @@ public class SysPermissionController {
 	 * @param id
 	 * @return
 	 */
-	@RequiresRoles({ "admin" })
+	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	public Result<SysPermission> delete(@RequestParam(name = "id", required = true) String id) {
 		Result<SysPermission> result = new Result<>();
 		try {
 			sysPermissionService.deletePermission(id);
-			sysPermissionService.deletePermRuleByPermId(id);
 			result.success("删除成功!");
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -344,7 +340,7 @@ public class SysPermissionController {
 	 * @param ids
 	 * @return
 	 */
-	@RequiresRoles({ "admin" })
+	//@RequiresRoles({"admin"})
 	@RequestMapping(value = "/deleteBatch", method = RequestMethod.DELETE)
 	public Result<SysPermission> deleteBatch(@RequestParam(name = "ids", required = true) String ids) {
 		Result<SysPermission> result = new Result<>();
@@ -442,7 +438,7 @@ public class SysPermissionController {
 	 * @return
 	 */
 	@RequestMapping(value = "/saveRolePermission", method = RequestMethod.POST)
-	@RequiresRoles({ "admin" })
+	//@RequiresRoles({"admin"})
 	public Result<String> saveRolePermission(@RequestBody JSONObject json) {
 		long start = System.currentTimeMillis();
 		Result<String> result = new Result<>();
@@ -814,7 +810,7 @@ public class SysPermissionController {
 	 * @return
 	 */
 	@RequestMapping(value = "/saveDepartPermission", method = RequestMethod.POST)
-	@RequiresRoles({ "admin" })
+	//@RequiresRoles({"admin"})
 	public Result<String> saveDepartPermission(@RequestBody JSONObject json) {
 		long start = System.currentTimeMillis();
 		Result<String> result = new Result<>();
